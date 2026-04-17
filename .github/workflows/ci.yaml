@@ -1,0 +1,137 @@
+name: ci
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.ref }}'
+  cancel-in-progress: false
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - arm_cortex-a7_neon-vfpv4
+          - aarch64_cortex-a53
+          - x86_64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          submodules: true
+      - name: Test
+        run: |
+          ./test.sh ${{ matrix.arch }}
+
+  coverage:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          submodules: true
+      - name: Install Rust nightly
+        run: |
+          rustup toolchain install nightly --component llvm-tools-preview
+          rustup default nightly
+      - name: Install cargo-llvm-cov
+        run: cargo install cargo-llvm-cov --locked
+      - name: Generate coverage
+        run: cargo llvm-cov --lcov --output-path lcov.info
+      - uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+
+  test-results:
+    if: always()
+    needs: [ test, coverage ]
+    runs-on: ubuntu-24.04
+    steps:
+      - run: |
+          results=("${{ needs.test.result }}" "${{ needs.coverage.result }}")
+          for result in "${results[@]}"; do
+            if [[ "$result" != "success" && "$result" != "skipped" ]]; then
+              echo "One or more jobs failed" >&2
+              exit 1
+            fi
+          done
+          echo "All tests passed"
+
+  version:
+    name: Determine version
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
+    steps:
+      - name: Determine version
+        id: version
+        run: |
+          # push to deploy branch returns dev-$SHA
+          # tag pushes return the tag
+          SHA="$(cut -c-8 <<< "$GITHUB_SHA")"
+          if [[ "$GITHUB_REF_NAME" == "main" ]]; then
+            echo "VERSION=dev-${SHA}" >> $GITHUB_OUTPUT
+          elif [[ "$GITHUB_REF" == 'refs/tags/'* ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+            echo "VERSION=${VERSION}-${SHA}" >> $GITHUB_OUTPUT
+          fi
+      - name: Print version
+        run: |
+          echo Building version: ${{ steps.version.outputs.VERSION }}
+
+  build:
+    needs: [ version ]
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - arm_cortex-a7_neon-vfpv4
+          - aarch64_cortex-a53
+          - x86_64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          submodules: true
+      - name: Build
+        run: |
+          ./build.sh ${{ matrix.arch }}
+        env:
+          PKG_VERSION: ${{ needs.version.outputs.version }}
+      - name: Determine binary path
+        id: binary
+        run: |
+          source ./hack/arch-config.sh
+          configure_arch "${{ matrix.arch }}"
+          echo "path=./target/${RUST_TARGET_DIR}/release/mqtt-wx" >> $GITHUB_OUTPUT
+      - name: Upload binary
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ${{ matrix.arch }}
+          retention-days: 1
+          if-no-files-found: error
+          path: ${{ steps.binary.outputs.path }}
+
+  build-results:
+    if: always()
+    needs: [ build ]
+    runs-on: ubuntu-24.04
+    steps:
+      - run: |
+          result="${{ needs.build.result }}"
+          if [[ "$result" == "success" || "$result" == "skipped" ]]; then
+            echo "All builds succeeded"
+          else
+            echo "One or more builds failed" >&2
+            exit 1
+          fi
