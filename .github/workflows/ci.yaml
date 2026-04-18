@@ -67,6 +67,28 @@ jobs:
           done
           echo "All tests passed"
 
+  version:
+    name: Determine version
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.VERSION }}
+    steps:
+      - name: Determine version
+        id: version
+        run: |
+          # push to deploy branch returns dev-$SHA
+          # tag pushes return the tag
+          SHA="$(cut -c-8 <<< "$GITHUB_SHA")"
+          if [[ "$GITHUB_REF_NAME" == "main" ]]; then
+            echo "VERSION=dev-${SHA}" >> $GITHUB_OUTPUT
+          elif [[ "$GITHUB_REF" == 'refs/tags/'* ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+            echo "VERSION=${VERSION}-${SHA}" >> $GITHUB_OUTPUT
+          fi
+      - name: Print version
+        run: |
+          echo Building version: ${{ steps.version.outputs.VERSION }}
+
   docker:
     needs: [version]
     permissions:
