@@ -1,5 +1,8 @@
 # mqtt-wx
 
+[![codecov](https://codecov.io/gh/USA-RedDragon/mqtt-wx-rs/graph/badge.svg?token=8dBAphXo0c)](https://codecov.io/gh/USA-RedDragon/mqtt-wx-rs) [![License](https://badgen.net/github/license/USA-RedDragon/mqtt-wx-rs)](https://github.com/USA-RedDragon/mqtt-wx-rs/blob/main/LICENSE) [![GitHub contributors](https://badgen.net/github/contributors/USA-RedDragon/mqtt-wx-rs)](https://github.com/USA-RedDragon/mqtt-wx-rs/graphs/contributors/)
+
+
 This is a little translation layer between rtl_433 and Home Assistant + WeeWX for a Cotech 36-7959 Weatherstation or other compatible models. It takes in multiple MQTT topics (weather station, indoor module, lightning, light, pressure, particle sensor, CO2) and coalesces them into a single output topic with computed meteorological values.
 
 Note: This is a form-fit translation layer between various weather-related sensors I personally have. I will not support use of this tool, but do provide it as an example to others who might want to do something similar.
