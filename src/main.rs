@@ -23,7 +23,7 @@ async fn main() {
         }
     };
 
-    log::info!("Connecting to MQTT broker at {}:{}", config.mqtt_host, config.mqtt_port);
+    log::info!("Connecting to MQTT broker at {}:{}", config.mqtt.host, config.mqtt.port);
 
     if let Err(e) = mqtt_client::run(config).await {
         log::error!("Fatal error: {e}");

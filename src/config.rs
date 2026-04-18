@@ -4,67 +4,79 @@ use configulator::{
 };
 
 #[derive(Config, Default, Debug)]
-pub struct AppConfig {
-    #[configulator(name = "mqtt-host", default = "localhost", description = "MQTT broker hostname")]
-    pub mqtt_host: String,
+pub struct MqttConfig {
+    #[configulator(name = "host", default = "localhost", description = "MQTT broker hostname")]
+    pub host: String,
 
-    #[configulator(name = "mqtt-port", default = "1883", description = "MQTT broker port")]
-    pub mqtt_port: u16,
+    #[configulator(name = "port", default = "1883", description = "MQTT broker port")]
+    pub port: u16,
 
-    #[configulator(name = "mqtt-username", default = "", description = "MQTT username")]
-    pub mqtt_username: String,
+    #[configulator(name = "username", default = "", description = "MQTT username")]
+    pub username: String,
 
-    #[configulator(name = "mqtt-password", default = "", description = "MQTT password")]
-    pub mqtt_password: String,
+    #[configulator(name = "password", default = "", description = "MQTT password")]
+    pub password: String,
+}
 
+#[derive(Config, Default, Debug)]
+pub struct InputTopicConfig {
     #[configulator(
-        name = "input-topic-weather",
+        name = "weather",
         default = "weather",
         description = "Input topic for weather station data"
     )]
-    pub input_topic_weather: String,
+    pub weather: String,
 
     #[configulator(
-        name = "input-topic-indoor",
+        name = "indoor",
         default = "indoor",
         description = "Input topic for indoor sensor data"
     )]
-    pub input_topic_indoor: String,
+    pub indoor: String,
 
     #[configulator(
-        name = "input-topic-lightning",
+        name = "lightning",
         default = "lightning",
         description = "Input topic for lightning data"
     )]
-    pub input_topic_lightning: String,
+    pub lightning: String,
 
     #[configulator(
-        name = "input-topic-light",
+        name = "light",
         default = "light",
         description = "Input topic for light data"
     )]
-    pub input_topic_light: String,
+    pub light: String,
 
     #[configulator(
-        name = "input-topic-pressure",
+        name = "pressure",
         default = "pressure",
         description = "Input topic for pressure data"
     )]
-    pub input_topic_pressure: String,
+    pub pressure: String,
 
     #[configulator(
-        name = "input-topic-particle-sensor",
+        name = "particle-sensor",
         default = "particle_sensor",
         description = "Input topic for particle sensor data"
     )]
-    pub input_topic_particle_sensor: String,
+    pub particle_sensor: String,
 
     #[configulator(
-        name = "input-topic-co2",
+        name = "co2",
         default = "co2",
         description = "Input topic for CO2 sensor data"
     )]
-    pub input_topic_co2: String,
+    pub co2: String,
+}
+
+#[derive(Config, Default, Debug)]
+pub struct AppConfig {
+    #[configulator(name = "mqtt")]
+    pub mqtt: MqttConfig,
+
+    #[configulator(name = "input-topic")]
+    pub input_topic: InputTopicConfig,
 
     #[configulator(
         name = "output-topic",
@@ -90,11 +102,11 @@ pub struct AppConfig {
 
 impl Validate for AppConfig {
     fn validate(&self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        if self.mqtt_host.is_empty() {
-            return Err("mqtt-host must not be empty".into());
+        if self.mqtt.host.is_empty() {
+            return Err("mqtt.host must not be empty".into());
         }
-        if self.mqtt_port == 0 {
-            return Err("mqtt-port must be non-zero".into());
+        if self.mqtt.port == 0 {
+            return Err("mqtt.port must be non-zero".into());
         }
         Ok(())
     }
@@ -111,9 +123,13 @@ pub fn load_config() -> Result<AppConfig, Box<dyn std::error::Error>> {
         .with_file(FileOptions {
             paths: vec![
                 "config.yaml".into(),
+                "config.yml".into(),
                 "/etc/mqtt-wx/config.yaml".into(),
+                "/etc/mqtt-wx/config.yml".into(),
                 "/config.yaml".into(),
+                "/config.yml".into(),
                 "/mqtt-wx.yaml".into(),
+                "/mqtt-wx.yml".into(),
             ],
             error_if_not_found: false,
             loader: serde_loader(|s| serde_yaml_ng::from_str(s)),

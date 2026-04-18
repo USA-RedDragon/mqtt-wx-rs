@@ -1,0 +1,36 @@
+# MQTT broker connection settings
+mqtt:
+  # Broker hostname (default: localhost)
+  host: "192.168.1.100"
+  # Broker port (default: 1883)
+  port: 1883
+  # Authentication credentials (optional)
+  username: "user"
+  password: "pass"
+
+# MQTT topics to subscribe to for sensor data
+input-topic:
+  # rtl_433 weather station (temperature, humidity, wind, rain, UV)
+  weather: "rtl_433/weather"
+  # Indoor temperature/humidity sensor
+  indoor: "rtl_433/indoor"
+  # Lightning detector
+  lightning: "rtl_433/lightning"
+  # Light/lux sensor
+  light: "rtl_433/light"
+  # Barometric pressure sensor
+  pressure: "rtl_433/pressure"
+  # Particulate matter sensor (PM2.5/PM10)
+  particle-sensor: "rtl_433/particle"
+  # CO2 sensor
+  co2: "rtl_433/co2"
+
+# MQTT topic to publish coalesced weather data to
+output-topic: "mqtt-wx/output"
+
+# Height of the weather sensor above ground level, in meters (default: 2.7432)
+sensor-height-m: 2.7432
+
+# Site elevation above sea level, in meters (default: 363.2)
+# Used for sea-level pressure correction and cloud base calculation
+elevation-m: 363.2

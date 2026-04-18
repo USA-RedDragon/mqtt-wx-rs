@@ -103,28 +103,28 @@ impl Processor {
             return actions;
         }
 
-        if topic == config.input_topic_weather {
+        if topic == config.input_topic.weather {
             if let Ok(data) = serde_json::from_str::<WeatherData>(payload) {
                 self.process_weather(&data, &mut actions);
             } else {
                 log::warn!("Failed to parse weather data: {payload}");
                 return actions;
             }
-        } else if topic == config.input_topic_indoor {
+        } else if topic == config.input_topic.indoor {
             if let Ok(data) = serde_json::from_str::<IndoorData>(payload) {
                 self.process_indoor(&data);
             } else {
                 log::warn!("Failed to parse indoor data: {payload}");
                 return actions;
             }
-        } else if topic == config.input_topic_particle_sensor {
+        } else if topic == config.input_topic.particle_sensor {
             if let Ok(data) = serde_json::from_str::<ParticleSensorData>(payload) {
                 self.process_particle_sensor(&data);
             } else {
                 log::warn!("Failed to parse particle sensor data: {payload}");
                 return actions;
             }
-        } else if topic == config.input_topic_lightning {
+        } else if topic == config.input_topic.lightning {
             if let Ok(data) = serde_json::from_str::<LightningData>(payload) {
                 if !self.process_lightning(&data, &mut actions) {
                     return actions;
@@ -133,21 +133,21 @@ impl Processor {
                 log::warn!("Failed to parse lightning data: {payload}");
                 return actions;
             }
-        } else if topic == config.input_topic_light {
+        } else if topic == config.input_topic.light {
             if let Ok(data) = serde_json::from_str::<LightData>(payload) {
                 self.process_light(&data);
             } else {
                 log::warn!("Failed to parse light data: {payload}");
                 return actions;
             }
-        } else if topic == config.input_topic_pressure {
+        } else if topic == config.input_topic.pressure {
             if let Ok(data) = serde_json::from_str::<PressureData>(payload) {
                 self.process_pressure(&data);
             } else {
                 log::warn!("Failed to parse pressure data: {payload}");
                 return actions;
             }
-        } else if topic == config.input_topic_co2 {
+        } else if topic == config.input_topic.co2 {
             if let Ok(data) = serde_json::from_str::<Co2Data>(payload) {
                 self.process_co2(&data);
             } else {
@@ -362,11 +362,11 @@ fn round4(v: f64) -> f64 {
 }
 
 pub async fn run(config: AppConfig) -> Result<(), Box<dyn std::error::Error>> {
-    let mut mqtt_options = MqttOptions::new("mqtt-wx", &config.mqtt_host, config.mqtt_port);
+    let mut mqtt_options = MqttOptions::new("mqtt-wx", &config.mqtt.host, config.mqtt.port);
     mqtt_options.set_keep_alive(std::time::Duration::from_secs(60));
 
-    if !config.mqtt_username.is_empty() {
-        mqtt_options.set_credentials(&config.mqtt_username, &config.mqtt_password);
+    if !config.mqtt.username.is_empty() {
+        mqtt_options.set_credentials(&config.mqtt.username, &config.mqtt.password);
     }
 
     let (client, mut eventloop) = AsyncClient::new(mqtt_options, 10);
@@ -375,13 +375,13 @@ pub async fn run(config: AppConfig) -> Result<(), Box<dyn std::error::Error>> {
     let topics = vec![
         topic_lightning_count(),
         topic_rain_24h(),
-        config.input_topic_weather.clone(),
-        config.input_topic_indoor.clone(),
-        config.input_topic_lightning.clone(),
-        config.input_topic_light.clone(),
-        config.input_topic_pressure.clone(),
-        config.input_topic_particle_sensor.clone(),
-        config.input_topic_co2.clone(),
+        config.input_topic.weather.clone(),
+        config.input_topic.indoor.clone(),
+        config.input_topic.lightning.clone(),
+        config.input_topic.light.clone(),
+        config.input_topic.pressure.clone(),
+        config.input_topic.particle_sensor.clone(),
+        config.input_topic.co2.clone(),
     ];
 
     let mut processor = Processor::new(config.sensor_height_m, config.elevation_m);
@@ -461,17 +461,21 @@ mod tests {
 
     fn test_config() -> AppConfig {
         AppConfig {
-            mqtt_host: "localhost".into(),
-            mqtt_port: 1883,
-            mqtt_username: String::new(),
-            mqtt_password: String::new(),
-            input_topic_weather: "weather".into(),
-            input_topic_indoor: "indoor".into(),
-            input_topic_lightning: "lightning".into(),
-            input_topic_light: "light".into(),
-            input_topic_pressure: "pressure".into(),
-            input_topic_particle_sensor: "particle_sensor".into(),
-            input_topic_co2: "co2".into(),
+            mqtt: crate::config::MqttConfig {
+                host: "localhost".into(),
+                port: 1883,
+                username: String::new(),
+                password: String::new(),
+            },
+            input_topic: crate::config::InputTopicConfig {
+                weather: "weather".into(),
+                indoor: "indoor".into(),
+                lightning: "lightning".into(),
+                light: "light".into(),
+                pressure: "pressure".into(),
+                particle_sensor: "particle_sensor".into(),
+                co2: "co2".into(),
+            },
             output_topic: "processed".into(),
             sensor_height_m: 2.7432,
             elevation_m: 363.2,
