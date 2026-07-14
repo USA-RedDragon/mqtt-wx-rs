@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1@sha256:87999aa3d42bdc6bea60565083ee17e86d1f3339802f543c0d03998580f9cb89
 
-FROM --platform=$BUILDPLATFORM ghcr.io/usa-reddragon/rust-cross:1.94.1@sha256:dc2183335372279003432756eb17eb98b1b7a3a80a13631a2f74697fc8b093eb AS builder
+FROM --platform=$BUILDPLATFORM ghcr.io/usa-reddragon/rust-cross:1.94.1@sha256:da0af0683f8611007df3ff71af3edc9141d5e1440c03a93b630bdefd3fdb7ca1 AS builder
 
 ARG TARGETARCH
 ARG PKG_VERSION=dev
