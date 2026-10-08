@@ -1,0 +1,8 @@
+repos:
+  - repo: https://github.com/USA-RedDragon/configulator-rs
+    rev: v0.2.3
+    hooks:
+      - id: configulator-sample
+        args: [--type, AppConfig, --sample-file, config.example.yaml]
+      - id: configulator-markdown
+        args: [--type, AppConfig, --markdown-file, README.md, --env-prefix, MQTT_WX__]

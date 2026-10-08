@@ -22,57 +22,30 @@ Configuration is loaded from multiple sources with the following precedence (hig
 3. **Environment variables** (prefixed with `MQTT_WX__`, e.g. `MQTT_WX__MQTT__HOST`)
 4. **CLI flags** (e.g. `--mqtt.host`)
 
-### Config file
+Copy [config.example.yaml](config.example.yaml) to `config.yaml` to get started. Every option:
 
-Create a `config.yaml`:
+<!-- configulator:begin -->
 
-```yaml
-mqtt:
-  host: "192.168.1.100"
-  port: 1883
-  username: "user"
-  password: "pass"
-input-topic:
-  weather: "rtl_433/weather"
-  indoor: "rtl_433/indoor"
-  lightning: "rtl_433/lightning"
-  light: "rtl_433/light"
-  pressure: "rtl_433/pressure"
-  particle-sensor: "rtl_433/particle"
-  co2: "rtl_433/co2"
-output-topic: "mqtt-wx/output"
-sensor-height-m: 2.7432
-elevation-m: 363.2
-```
+| Key                           | Type    | Default           | Environment                             | Flag                            | Description                               |
+|-------------------------------|---------|-------------------|-----------------------------------------|---------------------------------|-------------------------------------------|
+| `mqtt.host`                   | string  | `localhost`       | `MQTT_WX__MQTT__HOST`                   | `--mqtt.host`                   | MQTT broker hostname                      |
+| `mqtt.port`                   | integer | `1883`            | `MQTT_WX__MQTT__PORT`                   | `--mqtt.port`                   | MQTT broker port                          |
+| `mqtt.username`               | string  |                   | `MQTT_WX__MQTT__USERNAME`               | `--mqtt.username`               | MQTT username                             |
+| `mqtt.password`               | string  |                   | `MQTT_WX__MQTT__PASSWORD`               | `--mqtt.password`               | MQTT password                             |
+| `input-topic.weather`         | string  | `weather`         | `MQTT_WX__INPUT_TOPIC__WEATHER`         | `--input-topic.weather`         | Input topic for weather station data      |
+| `input-topic.indoor`          | string  | `indoor`          | `MQTT_WX__INPUT_TOPIC__INDOOR`          | `--input-topic.indoor`          | Input topic for indoor sensor data        |
+| `input-topic.lightning`       | string  | `lightning`       | `MQTT_WX__INPUT_TOPIC__LIGHTNING`       | `--input-topic.lightning`       | Input topic for lightning data            |
+| `input-topic.light`           | string  | `light`           | `MQTT_WX__INPUT_TOPIC__LIGHT`           | `--input-topic.light`           | Input topic for light data                |
+| `input-topic.pressure`        | string  | `pressure`        | `MQTT_WX__INPUT_TOPIC__PRESSURE`        | `--input-topic.pressure`        | Input topic for pressure data             |
+| `input-topic.particle-sensor` | string  | `particle_sensor` | `MQTT_WX__INPUT_TOPIC__PARTICLE_SENSOR` | `--input-topic.particle-sensor` | Input topic for particle sensor data      |
+| `input-topic.co2`             | string  | `co2`             | `MQTT_WX__INPUT_TOPIC__CO2`             | `--input-topic.co2`             | Input topic for CO2 sensor data           |
+| `output-topic`                | string  | `processed`       | `MQTT_WX__OUTPUT_TOPIC`                 | `--output-topic`                | Output topic for processed data           |
+| `sensor-height-m`             | number  | `2.7432`          | `MQTT_WX__SENSOR_HEIGHT_M`              | `--sensor-height-m`             | Sensor height above ground in meters      |
+| `elevation-m`                 | number  | `363.2`           | `MQTT_WX__ELEVATION_M`                  | `--elevation-m`                 | Field elevation in meters above sea level |
 
-### Environment variables
+<!-- configulator:end -->
 
-All config options can be set via environment variables with the prefix `MQTT_WX__` and separator `__`:
-
-| Environment Variable | Description |
-| --- | --- |
-| `MQTT_WX__MQTT__HOST` | MQTT broker hostname (default: `localhost`) |
-| `MQTT_WX__MQTT__PORT` | MQTT broker port (default: `1883`) |
-| `MQTT_WX__MQTT__USERNAME` | MQTT username |
-| `MQTT_WX__MQTT__PASSWORD` | MQTT password |
-| `MQTT_WX__INPUT_TOPIC__WEATHER` | Input topic for weather station data |
-| `MQTT_WX__INPUT_TOPIC__INDOOR` | Input topic for indoor sensor data |
-| `MQTT_WX__INPUT_TOPIC__LIGHTNING` | Input topic for lightning data |
-| `MQTT_WX__INPUT_TOPIC__LIGHT` | Input topic for light data |
-| `MQTT_WX__INPUT_TOPIC__PRESSURE` | Input topic for pressure data |
-| `MQTT_WX__INPUT_TOPIC__PARTICLE_SENSOR` | Input topic for particle sensor data |
-| `MQTT_WX__INPUT_TOPIC__CO2` | Input topic for CO2 sensor data |
-| `MQTT_WX__OUTPUT_TOPIC` | Output topic for processed data |
-| `MQTT_WX__SENSOR_HEIGHT_M` | Sensor height above ground in meters (default: `2.7432`) |
-| `MQTT_WX__ELEVATION_M` | Field elevation in meters above sea level (default: `363.2`) |
-
-### CLI flags
-
-```bash
-mqtt-wx --mqtt.host 192.168.1.100 --mqtt.port 1883 --mqtt.username user --mqtt.password pass
-```
-
-Run `mqtt-wx --help` for the full list of options.
+Run `mqtt-wx --help` for the flags.
 
 ## Computed values
 
