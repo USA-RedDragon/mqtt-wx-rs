@@ -1,4 +1,4 @@
-# Sample configuration for AppConfig.
+# Sample configuration
 mqtt:
   # MQTT broker hostname
   host: "localhost"

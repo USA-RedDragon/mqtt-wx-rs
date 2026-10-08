@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/USA-RedDragon/configulator-rs
-    rev: v0.2.3
+    rev: v0.3.0
     hooks:
       - id: configulator-sample
         args: [--type, AppConfig, --sample-file, config.example.yaml]
