@@ -1,6 +1,6 @@
 use configulator::{
-    CLIFlagOptions, Config, Configulator, EnvironmentVariableOptions, FileOptions, Validate,
-    serde_loader,
+    CLIFlagOptions, Config, Configulator, ConfigulatorError, EnvironmentVariableOptions,
+    FileOptions, Validate, serde_loader,
 };
 
 #[derive(Config, Default, Debug)]
@@ -72,10 +72,10 @@ pub struct InputTopicConfig {
 
 #[derive(Config, Default, Debug)]
 pub struct AppConfig {
-    #[configulator(name = "mqtt")]
+    #[configulator(name = "mqtt", nested)]
     pub mqtt: MqttConfig,
 
-    #[configulator(name = "input-topic")]
+    #[configulator(name = "input-topic", nested)]
     pub input_topic: InputTopicConfig,
 
     #[configulator(
@@ -131,18 +131,21 @@ pub fn load_config() -> Result<AppConfig, Box<dyn std::error::Error>> {
                 "/mqtt-wx.yaml".into(),
                 "/mqtt-wx.yml".into(),
             ],
-            error_if_not_found: false,
-            loader: serde_loader(|s| serde_yaml_ng::from_str(s)),
+            ..FileOptions::new(serde_loader(|s| serde_yaml_ng::from_str(s)))
         })
         .with_environment_variables(EnvironmentVariableOptions {
-            prefix: "MQTT_WX".into(),
+            prefix: "MQTT_WX__".into(),
             separator: "__".into(),
         })
         .with_cli_command(clap::Command::new("mqtt-wx").version(version))
         .with_cli_flags(CLIFlagOptions {
             separator: ".".into(),
         })
-        .load()?;
+        .load();
 
-    Ok(config)
+    match config {
+        Ok(config) => Ok(config),
+        Err(ConfigulatorError::CLIError(e)) => e.exit(),
+        Err(e) => Err(e.into()),
+    }
 }

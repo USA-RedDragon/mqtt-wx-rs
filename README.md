@@ -47,7 +47,7 @@ elevation-m: 363.2
 
 ### Environment variables
 
-All config options can be set via environment variables with the prefix `MQTT_WX` and separator `__`:
+All config options can be set via environment variables with the prefix `MQTT_WX__` and separator `__`:
 
 | Environment Variable | Description |
 | --- | --- |
