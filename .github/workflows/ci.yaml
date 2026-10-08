@@ -40,6 +40,7 @@ jobs:
     steps:
       - name: Generate GitHub App Token
         id: app-token
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           client-id: ${{ secrets.AUTO_COMMIT_APP_ID }}
@@ -47,8 +48,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
         with:
-          token: ${{ steps.app-token.outputs.token }}
-      - uses: USA-RedDragon/reusable-actions/configulator-rs-docs@529a6c6e160b4039d6251284544c13a806f65156 # v2.0.29
+          token: ${{ steps.app-token.outputs.token || github.token }}
+      - uses: USA-RedDragon/reusable-actions/configulator-rs-docs@86546533e7fe42b748a54ea123c6aa4e3e812241 # v2.0.31
         with:
           type: AppConfig
           env-prefix: MQTT_WX__
