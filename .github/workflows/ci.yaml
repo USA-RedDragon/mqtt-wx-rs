@@ -52,6 +52,7 @@ jobs:
         with:
           type: AppConfig
           env-prefix: MQTT_WX__
+          env-separator: __
           git-user-name: usa-reddragon-auto-commit-bot[bot]
           git-user-email: usa-reddragon-auto-commit-bot[bot]@users.noreply.github.com
 

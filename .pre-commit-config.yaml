@@ -5,4 +5,4 @@ repos:
       - id: configulator-sample
         args: [--type, AppConfig, --sample-file, config.example.yaml]
       - id: configulator-markdown
-        args: [--type, AppConfig, --markdown-file, README.md, --env-prefix, MQTT_WX__]
+        args: [--type, AppConfig, --markdown-file, README.md, --env-prefix, MQTT_WX__, --env-separator, __]
