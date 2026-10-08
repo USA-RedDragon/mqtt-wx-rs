@@ -157,9 +157,9 @@ checksum = "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570"
 
 [[package]]
 name = "configulator-derive"
-version = "0.2.0"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d71ecbb20049ca6bd0a547acb5e8644308455a02a0581a7041349c582bde8ea7"
+checksum = "06d7d210f6623794f50852a4b21b526509107829b266dff3531c5a508d1e78f9"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -168,9 +168,9 @@ dependencies = [
 
 [[package]]
 name = "configulator-rs"
-version = "0.2.0"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "512c89aa6e2111fc3ed5c87202faf360a2c9e29fd5141756b2241aa1a1a8db0c"
+checksum = "c38068d5855e0c4eff39814c1dd52018476bb08acb60e4939ad2035b54e0c0c9"
 dependencies = [
  "clap",
  "configulator-derive",
