@@ -11,10 +11,10 @@ pub struct MqttConfig {
     #[configulator(name = "port", default = "1883", description = "MQTT broker port")]
     pub port: u16,
 
-    #[configulator(name = "username", default = "", description = "MQTT username")]
+    #[configulator(name = "username", description = "MQTT username")]
     pub username: String,
 
-    #[configulator(name = "password", default = "", description = "MQTT password")]
+    #[configulator(name = "password", description = "MQTT password")]
     pub password: String,
 }
 

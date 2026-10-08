@@ -5,9 +5,9 @@ mqtt:
   # MQTT broker port
   port: 1883
   # MQTT username
-  username: ""
+  # username: ""
   # MQTT password
-  password: ""
+  # password: ""
 input-topic:
   # Input topic for weather station data
   weather: "weather"
