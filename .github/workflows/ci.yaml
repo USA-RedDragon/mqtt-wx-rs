@@ -47,7 +47,7 @@ jobs:
       app-key: ${{ secrets.AUTO_COMMIT_APP_KEY }}
 
   coverage:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
@@ -68,7 +68,7 @@ jobs:
   test-results:
     if: always()
     needs: [ test, coverage ]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - run: |
           results=("${{ needs.test.result }}" "${{ needs.coverage.result }}")
@@ -82,7 +82,7 @@ jobs:
 
   version:
     name: Determine version
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       version: ${{ steps.version.outputs.VERSION }}
     steps:
