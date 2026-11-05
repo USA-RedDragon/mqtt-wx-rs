@@ -33,7 +33,7 @@ RUN export RUST_TARGET="$(cat /tmp/rust_target)" && \
 
 FROM scratch
 
-COPY --from=alpine:latest@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371ea2c9a /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=alpine:latest@sha256:ce9e1e6d23f04a0b7593445a062a9fc73ed52f8260b9396f77a958295ad18ee7 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 COPY --from=builder /mqtt-wx /mqtt-wx
 
